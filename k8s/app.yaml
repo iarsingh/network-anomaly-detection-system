@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: network-anomaly-detection-system
+  labels:
+    app: network-anomaly-detection-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: network-anomaly-detection-system
+  template:
+    metadata:
+      labels:
+        app: network-anomaly-detection-system
+    spec:
+      containers:
+        - name: api
+          image: network-anomaly-detection-system:local
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /v1/readyz
+              port: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: network-anomaly-detection-system
+spec:
+  selector:
+    app: network-anomaly-detection-system
+  ports:
+    - port: 80
+      targetPort: 8080
